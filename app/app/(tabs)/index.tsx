@@ -97,7 +97,7 @@ export default function TodayScreen() {
           ) : null}
         </View>
         <Txt variant="heading" bold>
-          حكمة
+          مسك الكلام
         </Txt>
       </View>
 

@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "حكمة",
-    "slug": "hekmah",
+    "name": "مسك الكلام",
+    "slug": "misk-alkalam",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "hekmah",
+    "scheme": "miskalkalam",
     "userInterfaceStyle": "automatic",
     "primaryColor": "#0E6B58",
     "icon": "./assets/icon.png",
@@ -13,14 +13,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hekmah.app",
+      "bundleIdentifier": "com.miskalkalam.app",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
         "CFBundleDevelopmentRegion": "ar"
       }
     },
     "android": {
-      "package": "com.hekmah.app",
+      "package": "com.miskalkalam.app",
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

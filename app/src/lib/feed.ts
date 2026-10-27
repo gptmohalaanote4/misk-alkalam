@@ -8,7 +8,7 @@ import { HADITH_TOPIC } from '../data/seed';
  * استضافة ثابتة = **بلا خادم وبلا اشتراك**، فيبقى مبدأ تكلفة التشغيل صفراً
  * قائماً مع تجدّد المحتوى بلا تدخّل. وإن تعذّر الوصول عمل التطبيق على ما لديه.
  */
-const DEFAULT_FEED_URL = 'https://gptmohalaanote4.github.io/hekmah/content.json';
+const DEFAULT_FEED_URL = 'https://gptmohalaanote4.github.io/misk-alkalam/content.json';
 
 export const FEED_URL = process.env.EXPO_PUBLIC_CONTENT_URL ?? DEFAULT_FEED_URL;
 

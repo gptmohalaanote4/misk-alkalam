@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import type { ContentItem, PlanEntry, Scholar } from '../data/types';
-import { attributionName } from './format';
+import { attributionName, kindLabel } from './format';
 
 export const CHANNEL_ID = 'hekmah-daily';
 
@@ -26,8 +26,8 @@ export async function ensureAndroidChannel(): Promise<void> {
   if (Platform.OS !== 'android') return;
   try {
     await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'حكمة اليوم',
-      description: 'تذكير يومي بمقولة من أقوال العلماء',
+      name: 'مسك الكلام',
+      description: 'تذكير يومي: حديث أو دعاء أو مقولة',
       importance: Notifications.AndroidImportance.DEFAULT,
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       vibrationPattern: [0, 200, 120, 200],
@@ -105,7 +105,7 @@ export async function syncScheduledNotifications({
     try {
       const id = await Notifications.scheduleNotificationAsync({
         content: {
-          title: `${item.kind === 'hadith' ? 'حديث اليوم' : 'حكمة اليوم'} · ${attributionName(item, scholarsById)}`,
+          title: `${kindLabel(item)} · ${attributionName(item, scholarsById)}`,
           body: notificationBody(item.text),
           data: { itemId: item.id },
           sound: 'default',

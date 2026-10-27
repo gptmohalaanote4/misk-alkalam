@@ -1,4 +1,4 @@
-# حكمة — ملخّص المشروع الكامل
+# مسك الكلام — ملخّص المشروع الكامل
 
 > وُلّد في ١٤ أكتوبر ٢٠٢٦ من الفرع `claude/ecstatic-lovelace-biamsl` عند الـ commit رقم `5bc7bd6`.
 > المستودع: https://github.com/gptmohalaanote4/hekmah
@@ -13,8 +13,8 @@
 
 | | |
 |---|---|
-| الاسم | حكمة |
-| المعرّف | `com.hekmah.app` |
+| الاسم | مسك الكلام |
+| المعرّف | `com.miskalkalam.app` |
 | الإطار | Expo 57 / React Native 0.86 / React 19 |
 | اللغة | TypeScript، والواجهة عربية بالكامل من اليمين لليسار |
 | الخادم | Supabase (اختياري بالكامل) |

@@ -77,7 +77,7 @@ export default function ScheduleScreen() {
     if (permission !== 'granted') {
       const granted = await enableNotifications();
       if (!granted) {
-        Alert.alert('الإشعارات غير مفعّلة', 'فعّل الإشعارات لتطبيق «حكمة» من إعدادات الجهاز.');
+        Alert.alert('الإشعارات غير مفعّلة', 'فعّل الإشعارات لتطبيق «مسك الكلام» من إعدادات الجهاز.');
         return;
       }
     }

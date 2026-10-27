@@ -13,10 +13,10 @@ export default function AboutScreen() {
     <Screen>
       <Card style={styles.card}>
         <Txt variant="heading" bold center>
-          حكمة
+          مسك الكلام
         </Txt>
         <Txt variant="small" muted center>
-          مقولة لأحد العلماء وحديث في فضائل الأعمال، يصلانك بالتناوب في موعدٍ تختاره.
+          حديثٌ أو دعاءٌ أو مقولة، كلَّ يومٍ في موعدٍ تختاره، بمرجعه كاملاً.
         </Txt>
       </Card>
 
