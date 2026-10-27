@@ -44,7 +44,7 @@ export function ItemHero({ item, scholars, source, eyebrow }: Props) {
   return (
     <View style={[styles.wrapper, { shadowColor: colors.shadow }]}>
       <LinearGradient
-        colors={colors.heroGradient}
+        colors={colors.kinds[item.kind].gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}

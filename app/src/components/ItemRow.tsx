@@ -19,9 +19,9 @@ interface Props {
 /** صف في المكتبة أو السجل: الاسم أعلى، ثم النص، ثم المرجع بخط صغير. */
 export function ItemRow({ item, scholars, caption, isFavorite, onToggleFavorite, onPress }: Props) {
   const { colors } = useTheme();
-  // لونُ النقطة يميّز النوع: حديثٌ ذهبي، ودعاءٌ سماوي، ومقولةٌ بلون التطبيق.
-  const dotColor =
-    item.kind === 'hadith' ? colors.gold : item.kind === 'dua' ? colors.accent : colors.primary;
+  // لونُ النقطة هو حِبرُ القسم نفسه الذي تأخذه بطاقتُه البطلة — موضعٌ واحد
+  // يجمعها (`colors.kinds`) فلا يفترق لونُ الصفّ عن لون البطاقة.
+  const dotColor = colors.kinds[item.kind].tint;
 
   return (
     <Card style={styles.card} onPress={onPress}>

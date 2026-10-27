@@ -4,7 +4,24 @@
  * مع وضعين: فاتح (ورق) وداكن (ليل).
  */
 
+import type { ItemKind } from '../data/types';
+
 export type ThemeName = 'light' | 'dark';
+
+/**
+ * لونُ القسم — «حِبرٌ ومِداد».
+ *
+ * لكلِّ نوعٍ حِبرُه من عائلة المخطوط نفسها، فيُعرف القسم من لونه قبل قراءة سطر:
+ * الحديثُ زمرّديّ (وهو عمود التطبيق)، والمقولةُ بنّيٌّ ذهبيّ (لونُ الحبر في
+ * الكتب)، والدعاءُ نيليّ. وهذا **لون المحتوى وحده**؛ وهيكلُ الواجهة — الأزرار
+ * والتبويبات — يبقى على `primary` الزمرديّ، وإلّا تبدّل وجهُ التطبيق كلَّ يوم.
+ */
+export interface KindPalette {
+  /** اللون على سطحٍ عادي: نقطةُ الصفّ، والأيقونة، والسطر العلوي. */
+  tint: string;
+  /** تدرّجُ البطاقة البطلة — ثلاثُ درجاتٍ من الفاتح إلى الغامق. */
+  gradient: [string, string, string];
+}
 
 export interface Palette {
   /** خلفية الشاشة الأساسية */
@@ -37,14 +54,14 @@ export interface Palette {
   goldSoft: string;
   /** لون ثالث يميّز الأدعية عن الأحاديث والمقولات */
   accent: string;
+  /** حِبرُ كل قسم — انظر `KindPalette`. */
+  kinds: Record<ItemKind, KindPalette>;
   /** أحمر للأخطاء */
   danger: string;
   /** خلفية خافتة للخطأ */
   dangerSoft: string;
   /** أخضر للنجاح */
   success: string;
-  /** تدرّج خلفية البطاقة البطلة */
-  heroGradient: [string, string, string];
   /** لون الزخرفة الهندسية */
   ornament: string;
   /** ظل */
@@ -68,10 +85,14 @@ export const palettes: Record<ThemeName, Palette> = {
     gold: '#A9822B',
     goldSoft: '#F6EEDC',
     accent: '#2E6E8E',
+    kinds: {
+      hadith: { tint: '#0E6B58', gradient: ['#0E6B58', '#0B5547', '#083E35'] },
+      quote: { tint: '#8A5A2B', gradient: ['#8A5A2B', '#6E4722', '#523419'] },
+      dua: { tint: '#2E6E8E', gradient: ['#2E6E8E', '#255770', '#1B4053'] },
+    },
     danger: '#B3261E',
     dangerSoft: '#FBEAE8',
     success: '#1F7A4D',
-    heroGradient: ['#0E6B58', '#0B5547', '#083E35'],
     ornament: '#0E6B58',
     shadow: '#1A2B25',
   },
@@ -91,10 +112,15 @@ export const palettes: Record<ThemeName, Palette> = {
     gold: '#D9B661',
     goldSoft: '#2A2416',
     accent: '#6FB3D2',
+    // في الليل تُرفع الدرجةُ للنصّ الأبيض ويُخفَض التشبّع، وإلّا ابتلع السوادُ الفرق.
+    kinds: {
+      hadith: { tint: '#49B294', gradient: ['#10493D', '#0C332C', '#081F1B'] },
+      quote: { tint: '#C99A52', gradient: ['#4A331A', '#382614', '#26190D'] },
+      dua: { tint: '#6FB3D2', gradient: ['#1C3F52', '#15303E', '#0E212B'] },
+    },
     danger: '#F2938C',
     dangerSoft: '#3A1F1D',
     success: '#5BC68E',
-    heroGradient: ['#10493D', '#0C332C', '#081F1B'],
     ornament: '#49B294',
     shadow: '#000000',
   },
