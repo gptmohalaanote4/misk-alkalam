@@ -1,0 +1,79 @@
+{
+  "books": {
+    "199": {
+      "cursor": 83,
+      "done": false,
+      "channel": "turath"
+    },
+    "212": {
+      "cursor": 309,
+      "done": true,
+      "channel": "turath"
+    },
+    "252": {
+      "cursor": 83,
+      "done": false,
+      "channel": "turath"
+    },
+    "417": {
+      "cursor": 83,
+      "done": false,
+      "channel": "turath"
+    },
+    "1681": {
+      "cursor": 1,
+      "done": true,
+      "query": 4,
+      "searchPage": 1,
+      "channel": "turath"
+    },
+    "10495": {
+      "cursor": 3892,
+      "done": true,
+      "section": [
+        "[من المشهورين بالنسك والعبادة من عباد الشام]"
+      ],
+      "last": 3891,
+      "channel": "shamela"
+    },
+    "12003": {
+      "cursor": 83,
+      "done": false,
+      "channel": "turath"
+    },
+    "12031": {
+      "cursor": 1667,
+      "done": true,
+      "last": 1666,
+      "section": [
+        "ذكر المصطفين من عباد الجن"
+      ],
+      "channel": "shamela"
+    },
+    "14211": {
+      "cursor": 81,
+      "done": false,
+      "channel": "turath"
+    },
+    "18128": {
+      "cursor": 83,
+      "done": false,
+      "channel": "turath"
+    },
+    "18612": {
+      "cursor": 83,
+      "done": false,
+      "channel": "turath"
+    },
+    "98093": {
+      "cursor": 182,
+      "done": false,
+      "channel": "turath"
+    },
+    "145411": {
+      "cursor": 83,
+      "done": false,
+      "channel": "turath"
+    }
+  }
+}

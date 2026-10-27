@@ -1,0 +1,26 @@
+[
+  {
+    "id": "33333333-3333-4333-8333-000000000001",
+    "slug": "turath",
+    "name": "موقع تراث",
+    "kind": "turath",
+    "base_url": "https://app.turath.io",
+    "note": "المكتبة الشاملة للتراث الإسلامي — المصدر الافتراضي للتطبيق.",
+    "is_builtin": true,
+    "is_default": true,
+    "is_active": true,
+    "sort_order": 1
+  },
+  {
+    "id": "33333333-3333-4333-8333-000000000002",
+    "slug": "shamela",
+    "name": "المكتبة الشاملة",
+    "kind": "external",
+    "base_url": "https://shamela.ws",
+    "note": "أصلُ نصوص «تراث» بالمُعرّفات والترقيم نفسها — تُحصد منها كتب السِّيَر وكتب ابن القيم.",
+    "is_builtin": true,
+    "is_default": false,
+    "is_active": true,
+    "sort_order": 2
+  }
+]

@@ -1,0 +1,90 @@
+# ────────────────────────────────────────────────────────────────
+#  تجديد المحتوى تلقائياً
+#
+#  يحصد نصوصاً جديدة من «تراث» بمراجعها، يعتمدها في المستودع، وينشر
+#  `content.json` على GitHub Pages ليسحبه التطبيق. فيتجدّد المحتوى
+#  بلا تدخّل وبلا خادم وبلا اشتراك — مبدأ تكلفة التشغيل صفراً قائم.
+#
+#  لتشغيله أول مرة:
+#    Settings → Pages → Source = GitHub Actions
+#    Settings → Actions → General → Workflow permissions = Read and write
+# ────────────────────────────────────────────────────────────────
+name: تجديد المحتوى
+
+on:
+  schedule:
+    # كل يوم اثنين ٣:١٧ ت.ع.م — وقتٌ غير مزدحم على «تراث».
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: عدد الصفحات المقروءة في الجولة
+        default: '120'
+      max:
+        description: حدّ العناصر الجديدة في الجولة
+        default: '25'
+
+# جولة واحدة في وقت واحد: المؤشر وملفات البذرة لا تتحمّل تشغيلين متوازيين.
+concurrency:
+  group: content
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # الأدوات تعمل بـ node وحده — لا npm install هنا.
+      - name: الحصد من «تراث»
+        run: >-
+          node tools/turath-harvest.mjs
+          --pages=${{ github.event.inputs.pages || '120' }}
+          --max=${{ github.event.inputs.max || '25' }}
+
+      # بوّابة مستقلّة: الحاصد يشغّل التحقّق، ونعيده هنا صريحاً حتى يُفشل
+      # الجولة أي خطأ في المحتوى قبل أن يُعتمد أو يُنشر.
+      - name: التحقّق من المحتوى
+        run: node tools/validate-content.mjs
+
+      - name: اعتماد الجديد
+        id: commit
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "لا جديد في هذه الجولة."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/data/seed supabase/seed.sql public/content.json tools/harvest-state.json
+          git commit -m "محتوى: جولة حصد آلية من «تراث»"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  # النشر في كل جولة ولو لم يتغيّر المحتوى: يضمن أن الملف المنشور هو آخر ما
+  # في المستودع، ولو فشل نشرٌ سابق.
+  publish:
+    needs: harvest
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
