@@ -516,19 +516,22 @@ async function main() {
       console.log(`• ${bookName}: مسحٌ مكتمل — لإعادة المسح: --reset.\n`);
       continue;
     }
-    await adoptCursorToChannel(bookName, book, bookState);
-    // `--from` يُذكر بمُعرّفات القناة العاملة، فيَلِي النقلَ ولا يُترجَم.
-    if (fromPage) {
-      bookState.cursor = fromPage;
-      bookState.done = false;
-    }
-
     // خللُ شبكةٍ عارض لا يُهدِر الجولة. المؤشر يتقدّم في `bookState` مع كل صفحةٍ
     // تُقرأ، فالخروجُ نظيفاً يحفظ ما قُرئ وما حُصد؛ والاستثناءُ لو صعد لأُلغي
     // كلُّ شيء — وقد وقع فعلاً في «سير أعلام النبلاء»: ضاعت خمس مئة صفحةٍ
     // وأربعةُ أخبارٍ لانقطاعٍ لحظة. (وهذا ما يفعله مسارُ «تراث» عند حدّ الطلبات:
     // يتوقف والمؤشر باقٍ.)
+    //
+    // و**نقلُ المؤشر داخل الحارس** لا خارجه: هو نفسُه يطلب من الشبكة، فكان
+    // خروجُه منه يُسقِط الجولة كلَّها بأول خطأ — وهو ما أفشل أوّل تشغيلٍ على
+    // GitHub Actions في سبع ثوانٍ، قبل أن يُقرأ حرفٌ واحد.
     try {
+      await adoptCursorToChannel(bookName, book, bookState);
+      // `--from` يُذكر بمُعرّفات القناة العاملة، فيَلِي النقلَ ولا يُترجَم.
+      if (fromPage) {
+        bookState.cursor = fromPage;
+        bookState.done = false;
+      }
       if (['bullet', 'sentence', 'biography'].includes(book.harvest)) {
         await harvestBulleted(bookName, book, bookState);
       }
