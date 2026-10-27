@@ -6,3 +6,6 @@ web-build/
 .env
 .env.local
 .DS_Store
+
+# موادّ المتجر مولَّدة — تُرفع بيدك في Play Console
+store/

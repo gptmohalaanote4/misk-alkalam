@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 /**
  * يولّد أيقونات التطبيق بلا أي مكتبة خارجية: رسم نقطي + ترميز PNG يدوي.
- *   node tools/gen-icons.mjs
+ *   node tools/gen-icons.mjs            # أيقونات التطبيق في app/assets
+ *   node tools/gen-icons.mjs --store    # ومعها موادّ Google Play في store/
+ *
+ * وموادّ المتجر مقاساتُها مفروضةٌ من Play: الأيقونة ٥١٢×٥١٢، والرسم البارز
+ * ١٠٢٤×٥٠٠ — وهو الوحيد غير المربّع، فله راسمٌ خاصّ (`renderBanner`).
+ * ولا نصَّ فيه: لا خطوط هنا، ورسمُ الحروف بالبكسل تكلُّفٌ لا يُحسِن شيئاً.
  */
 import { deflateSync } from 'node:zlib';
 import { writeFileSync, mkdirSync } from 'node:fs';
@@ -183,4 +188,85 @@ const files = [
 for (const [name, size, opts] of files) {
   const bytes = writePng(join(out, name), size, size, render(size, opts));
   console.log(`${name.padEnd(22)} ${size}×${size}  ${(bytes / 1024).toFixed(1)} KB`);
+}
+
+/* ───────────── الرسم البارز في Play (غير مربّع) ───────────── */
+
+/**
+ * لوحةٌ عريضة: تدرُّجٌ قُطريّ، ونجمةٌ كبيرةٌ مُزاحةٌ إلى الجهة، وحلقاتٌ خفيفة.
+ * والنجمة نفسها شكلاً — `starEdgeDistance` — فيتّحد وجهُ المتجر ووجهُ التطبيق.
+ */
+function renderBanner(width, height) {
+  const S = 2;
+  const W = width * S;
+  const H = height * S;
+  const buf = Buffer.alloc(W * H * 4);
+  // المركز في الثلث الأيمن: العربية تُقرأ من اليمين، فالعلامة تبدأ البصر.
+  const cx = W * 0.74;
+  const cy = H / 2;
+  const radius = H * 0.3;
+  const stroke = H * 0.022;
+  const px = 1.4;
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4;
+      const dx = x - cx + 0.5;
+      const dy = y - cy + 0.5;
+      const rr = Math.hypot(dx, dy);
+
+      const t = (x / W) * 0.65 + (y / H) * 0.35;
+      let rgb = mix(EMERALD, DEEP, t);
+
+      const onStar = band(starEdgeDistance(dx, dy, radius), stroke, px);
+      const onInnerStar = band(starEdgeDistance(dx, dy, radius * 0.52), stroke * 0.8, px);
+      const onDot = disc(rr, radius * 0.13, px);
+      // حلقاتٌ متباعدة تُعطي عمقاً بلا أن تزحم العلامة.
+      const rings =
+        Math.max(
+          band(rr - radius * 1.38, stroke * 0.45, px),
+          band(rr - radius * 1.72, stroke * 0.32, px),
+        ) * 0.42;
+
+      const mark = Math.max(onStar, onInnerStar, onDot, rings);
+      if (mark > 0) rgb = mix(rgb, GOLD, mark);
+
+      buf[i] = rgb[0];
+      buf[i + 1] = rgb[1];
+      buf[i + 2] = rgb[2];
+      buf[i + 3] = 255;
+    }
+  }
+
+  const small = Buffer.alloc(width * height * 4);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let r = 0, g = 0, b = 0;
+      for (let sy = 0; sy < S; sy++) {
+        for (let sx = 0; sx < S; sx++) {
+          const j = ((y * S + sy) * W + (x * S + sx)) * 4;
+          r += buf[j]; g += buf[j + 1]; b += buf[j + 2];
+        }
+      }
+      const n = S * S;
+      const i = (y * width + x) * 4;
+      small[i] = Math.round(r / n);
+      small[i + 1] = Math.round(g / n);
+      small[i + 2] = Math.round(b / n);
+      small[i + 3] = 255;
+    }
+  }
+  return small;
+}
+
+if (process.argv.includes('--store')) {
+  const storeDir = join(root, 'store');
+  mkdirSync(storeDir, { recursive: true });
+  console.log('\nموادّ Google Play — store/');
+
+  const icon = writePng(join(storeDir, 'play-icon.png'), 512, 512, render(512, { filled: true }));
+  console.log(`${'play-icon.png'.padEnd(22)} 512×512  ${(icon / 1024).toFixed(1)} KB`);
+
+  const banner = writePng(join(storeDir, 'play-feature.png'), 1024, 500, renderBanner(1024, 500));
+  console.log(`${'play-feature.png'.padEnd(22)} 1024×500  ${(banner / 1024).toFixed(1)} KB`);
 }
