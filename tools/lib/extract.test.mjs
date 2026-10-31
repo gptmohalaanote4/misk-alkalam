@@ -12,6 +12,7 @@ import {
   extractBulleted,
   extractHadiths,
   extractSentences,
+  extractAnthology,
   findDuplicate,
   groupMatns,
   isPublishable,
@@ -577,4 +578,39 @@ test('الضمير المعلَّق في خبرٍ قصير يُسقِطه، وا
 test('حدّ الخمسين كلمة مفروض', () => {
   const long = `قال: كان الحسن البصري ${'يذكر الله ويصلي '.repeat(20)}.`;
   assert.deepEqual(extractBiography(long), []);
+});
+
+// ─────────────── المجاميع الموضوعية ───────────────
+
+test('وحدةُ المجموع فقرةٌ لا جملة', () => {
+  // الموقفُ يُساق في فقرةٍ فيها جملٌ عدّة؛ والقطعُ عند أول نقطةٍ كان يُبقي
+  // أوّلَها ويرمي الموقف — فأخرج ٣٢ من ٥٣٥ فقرة في «قيمة الزمن».
+  const page =
+    'سطرٌ أوّلُ تتمّةُ ما قبله.\n' +
+    'قال موسى بن إسماعيل: لو قلت لكم إني ما رأيت حماد بن سلمة ضاحكا لصدقت، كان مشغولا: إما أن يحدث أو يقرأ، أو يسبح، أو يصلي، وقد قسم النهار على ذلك.';
+  const { items } = extractAnthology(page, { page: 28 });
+  assert.equal(items.length, 1);
+  assert.match(items[0].text, /وقد قسم النهار على ذلك\.$/);
+});
+
+test('الفقرةُ العابرةُ لحدّ الصفحة تُوصل وتُنسب إلى صفحة ابتدائها', () => {
+  const first = extractAnthology('تتمّة.\nكان القدماء يحذرون من تضييع الزمان، قال الفضيل بن عياض', { page: 59 });
+  assert.equal(first.items.length, 0);
+  assert.ok(first.carry, 'لم تُحفظ الفقرة المقطوعة');
+  const second = extractAnthology('أعرف من يعد كلامه من الجمعة إلى الجمعة.\nسطرٌ آخر.', {
+    carry: first.carry,
+    page: 60,
+  });
+  assert.equal(second.items.length, 1);
+  assert.equal(second.items[0].page, 59, 'نُسبت إلى صفحة انتهائها لا ابتدائها');
+  assert.match(second.items[0].text, /^كان القدماء.*الجمعة\.$/);
+});
+
+test('الآيةُ والحديثُ لا يخرجان من المجموع', () => {
+  const quran =
+    'تتمّة.\nقال تعالى ممتنا على عباده: (الله الذي خلق السموات والأرض، وأنزل من السماء ماء فأخرج به من الثمرات رزقا لكم، وسخر لكم الفلك لتجري في البحر بأمره.';
+  assert.equal(extractAnthology(quran, { page: 17 }).items.length, 0);
+  const hadith =
+    'تتمّة.\nوعن عبد الله بن مسعود قال: سألت رسول الله أي الأعمال أحب إلى الله؟ قال: الصلاة على وقتها. رواه البخاري ومسلم.';
+  assert.equal(extractAnthology(hadith, { page: 9 }).items.length, 0);
 });

@@ -78,6 +78,14 @@ export const BOOKS = {
   'صفة الصفوة': { id: 12031, edition: 'ط دار الحديث (ترقيم موافق للمطبوع)', kind: 'quote', genre: 'biography', scholar_slug: 'ibn-al-jawzi', harvest: 'biography', channel: 'shamela' },
   'حلية الأولياء': { id: 10495, edition: 'ط السعادة (ترقيم موافق للمطبوع)', kind: 'quote', genre: 'biography', scholar_slug: 'abu-nuaym', harvest: 'biography', channel: 'shamela' },
   'الرسالة التبوكية': { id: 14211, edition: 'ضمن مجموع الرسائل — ط عطاءات العلم', kind: 'quote', scholar_slug: 'ibn-al-qayyim', harvest: 'sentence', channel: 'shamela' },
+
+  // مجاميعُ موضوعية: كتابٌ يجمع مواقفَ العلماء وأقوالَهم في بابٍ واحد، فكلُّ
+  // ما فيه في الموضوع. وآليّتُها `anthology` — وحدتُها الفقرة المطبوعة، لأن
+  // `biography` تشترط «كان فلانٌ…» فأعطت صفراً، و`sentence` تردّ كلَّ منقولٍ
+  // وهذه الكتب كلُّها نقل. و**لا تدخل البذرة آلياً**: النصُّ فيها منقولٌ عن
+  // غير مؤلّفه، فنسبتُه قرارٌ لصاحب المشروع (انظر «النسبة في المجاميع»).
+  'قيمة الزمن عند العلماء': { id: 96882, edition: 'ط الشاملة', kind: 'quote', genre: 'anthology', topic: 'الحرص على الوقت', harvest: 'anthology', channel: 'shamela' },
+  'علو الهمة': { id: 96278, edition: 'ط الشاملة', kind: 'quote', genre: 'anthology', topic: 'علو الهمة', harvest: 'anthology', channel: 'shamela' },
 };
 
 /** اسم الكتاب الذي يُعرض تحت الحديث. */

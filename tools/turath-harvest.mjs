@@ -44,6 +44,7 @@ import {
   biographySectionOk,
   extractBulleted,
   extractHadiths,
+  extractAnthology,
   extractSentences,
   findDuplicate,
   isDeedChapter,
@@ -170,12 +171,17 @@ async function main() {
    *
    * فصارت تُحصد **فقط** مع `--candidates`، أي إلى ملفِّ مراجعةٍ لا إلى البذرة.
    * والضمانُ في الشفرة لا في تذكُّر الراية.
+   *
+   * و`anthology` مثلها، لسببٍ آخر: نصُّها منقولٌ عن غير مؤلّف الكتاب — القولُ
+   * للفضيل بن عياض والكتابُ لأبي غدة — فنسبتُه قرارٌ لصاحب المشروع لا للآلة.
    */
+  const CANDIDATES_ONLY = new Set(['sentence', 'anthology']);
+
   const harvestable = Object.entries(BOOKS).filter(
     ([name, book]) =>
       book.harvest &&
       (!onlyBook || name === onlyBook) &&
-      (book.harvest !== 'sentence' || Boolean(candidatesFile)),
+      (!CANDIDATES_ONLY.has(book.harvest) || Boolean(candidatesFile)),
   );
   if (harvestable.length === 0) {
     console.error(onlyBook ? `لا حصد من «${onlyBook}» — راجع BOOKS.` : 'لا كتاب قابلاً للحصد.');
@@ -291,6 +297,8 @@ async function main() {
     const before = addedQuotes.length;
     // العناوين تُحمل بين الصفحات: «تراث» لا يذكرها إلا في صفحة ابتدائها.
     let section = bookState.section ?? [];
+    /** فقرةٌ لم تُختم في آخر صفحة: تنتظر تتمّتها في أوّل التالية (المجموع وحده). */
+    let anthCarry = null;
     let empties = 0;
 
     while (canSpend()) {
@@ -354,6 +362,18 @@ async function main() {
       // الصفحة تُستوفى كاملة: قد تتجاوز نصيب الجولة بقليل، لكن إغفال فائدةٍ في
       // صفحةٍ قُرئت يعني ضياعها، لأن المؤشر يتقدّم ولا يعود.
       const url = channel.pageUrl(book.id, page.pageId);
+
+      // المجموعُ وحده يحمل حالةً بين الصفحات: الفقرةُ تعبُر حدَّ الصفحة فتُوصل،
+      // وتُنسب إلى الصفحة التي ابتدأت فيها لا التي انتهت — فلكلِّ عنصرٍ صفحتُه.
+      if (book.harvest === 'anthology') {
+        const got = extractAnthology(page.text, { carry: anthCarry, page: ref.page });
+        anthCarry = got.carry;
+        for (const item of got.items) {
+          addQuote(item.text, book, bookName, ref.volume, item.page, url);
+        }
+        continue;
+      }
+
       const extractor =
         book.harvest === 'sentence'
           ? extractSentences
@@ -547,7 +567,7 @@ async function main() {
         bookState.cursor = fromPage;
         bookState.done = false;
       }
-      if (['bullet', 'sentence', 'biography'].includes(book.harvest)) {
+      if (['bullet', 'sentence', 'biography', 'anthology'].includes(book.harvest)) {
         await harvestBulleted(bookName, book, bookState);
       }
       if (book.harvest === 'hadeeth') await harvestMeritChapters(bookName, book, bookState);

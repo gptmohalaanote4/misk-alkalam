@@ -289,10 +289,17 @@ const isListItem = (text) => {
  */
 const startsConnected = (bare) => /^[وف]/.test(bare);
 
-const isSelfContained = (text) => {
+/**
+ * `allowConnective` تُرخِّص الواو والفاء في المطلع — **للمجاميع وحدها**.
+ * ففي النثر المتّصل تدلّ الواوُ أن الجملة قُطعت عمّا قبلها، وفي المجموع تدلّ
+ * على سردٍ جديد: الفقرةُ وحدةٌ مطبوعةٌ قائمةٌ بنفسها ومعها نسبتُها («وقال
+ * الحسن البصري: يا ابن آدم، إنما أنت أيام…»). وتطبيقُ القاعدة عليها أنزل
+ * «قيمة الزمن» من ٢١٦ إلى ٥١.
+ */
+const isSelfContained = (text, { allowConnective = false } = {}) => {
   if (isListItem(text)) return false;
   const bare = plain(text);
-  if (startsConnected(bare)) return false;
+  if (!allowConnective && startsConnected(bare)) return false;
   // الواوُ والفاء تُجرَّدان قبل فحص التعداد ورأس القسم كما تُجرَّدان قبل
   // الإشارة: «ومن الصبر الثاني:» و«وحالة أخرى» بندا قائمةٍ وإن سبقتهما واو.
   const stem = bare.replace(/^[وف]/, '');
@@ -836,4 +843,95 @@ export function extractHadiths(pageText, context) {
   }
 
   return { items: out, context: { chapter, bab } };
+}
+
+// ─────────────── استخراج المجاميع الموضوعية ───────────────
+/**
+ * كتبٌ موضوعيّةٌ تجمع مواقفَ العلماء وأقوالَهم في بابٍ واحد — «قيمة الزمن عند
+ * العلماء» لأبي غدة، و«علو الهمة» للمقدم.
+ *
+ * ولا تصلح لها الآليّتان: `biography` تشترط «كان فلانٌ…» فأعطت **صفراً** من
+ * «قيمة الزمن»، و`sentence` تردّ كلَّ منقولٍ وهذه الكتب كلُّها نقل. ووحدتُها
+ * **الفقرة المطبوعة**: كلُّ فقرةٍ موقفٌ أو نقلٌ مكتمل، وحدُّها من الطباعة.
+ *
+ * وأوّلُ بناءٍ لها أخرج ٣٢ من ٥٣٥ فقرة، لأنه قطع عند أول نقطةٍ بعد «قال فلان:»
+ * وردَّ كلَّ ما فيه «سمعت» إسناداً. فالوحدةُ الفقرة، و«سمعت» تُصدِّر الموقفَ
+ * ولا تكون هي الموقف.
+ */
+const ANTH_MIN = 60;
+const ANTH_MAX = 460;
+
+/** الآيةُ ليست مقولة: المؤلف يضعها بين قوسين. */
+const quranish = (s) => {
+  const inside = [...s.matchAll(/\(([^()]{20,})\)/g)].reduce((n, m) => n + m[1].length, 0);
+  if (inside / Math.max(s.length, 1) > 0.4) return true;
+  // قوسٌ يُفتح ولا يُغلق، وجُلُّ الفقرة بعده: الباقي متنُ الاقتباس، امتدّ إلى
+  // ما بعد الفقرة. ولا يُشترط توازنُ الأقواس مطلقاً — فالقوسُ يُستعمل لأسماء
+  // الكتب، واشتراطُ التوازن كان يردّ ٨١ فقرةً صالحة من «قيمة الزمن».
+  const open = s.lastIndexOf('(');
+  return open !== -1 && s.indexOf(')', open) === -1 && (s.length - open) / s.length > 0.5;
+};
+
+/** النسبةُ إلى الله أو رسوله: آيةٌ أو حديث، لا قولُ عالم. */
+const DIVINE_SPEAKER = /(?:^|\s)(?:قال|وقال|يقول)\s*(?:الله|تعالى|عز وجل|سبحانه)/;
+
+/**
+ * الحديثُ لا يُنشر مقولةً: مصدرُه الصحيحان بآليّته، وفي فضائل الأعمال.
+ * (تسرّب في أول تجربة: «سألت رسول الله… الصلاة على وقتها. رواه البخاري ومسلم».)
+ */
+const QUOTED_HADITH =
+  /ﷺ|صلى الله عليه وسلم|رسول الله|النبي|رواه البخاري|رواه مسلم|متفق عليه|رواه الترمذي|أخرجه/;
+
+/** سندٌ محضٌ بلا متن: سلسلةُ رواةٍ لم يتلُها قول. */
+const bareIsnad = (bare) =>
+  (bare.match(/(?:^|\s)(?:حدثنا|حدثني|أخبرنا|أخبرني|أنبأنا|ثنا|نا)\s/g) || []).length >= 2;
+
+/** عنوانُ قسمٍ بين معقوفين، أو سطرٌ قصيرٌ بلا علامة ختام. */
+const anthHeading = (s) => /^\s*\[/.test(s) || (s.length < 70 && !/[.؟!]/.test(s));
+
+/**
+ * يستخرج فقرات صفحةٍ من كتابٍ جامع.
+ *
+ * `carry` فقرةٌ لم تُختم في آخر الصفحة السابقة: تُوصل بأوّل هذه وتُنسب إلى
+ * صفحتها الأولى — فالفقرةُ تعبُر حدَّ الصفحة كثيراً، ورميُ طرفَيها كان يُسقط
+ * نحو نصف الكتاب. ويعيد الدالّةُ `carry` الجديد ليستعمله المتصل في الصفحة التالية.
+ */
+export function extractAnthology(pageText, { carry = null, page = null } = {}) {
+  const raw = String(pageText)
+    .split(/\n_{3,}/)[0]
+    .replace(/<span data-type="title">[\s\S]*?<\/span>/g, '\n')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\(\^[^)]*\)/g, ' ')
+    .split('\n')
+    .map((s) => s.replace(/\s+([،؛:.!؟])/g, '$1').replace(/[ \t]+/g, ' ').trim())
+    .filter(Boolean);
+
+  const units = [];
+  let rest = raw;
+  if (rest.length && carry && !/[.؟!]$/.test(carry.text)) {
+    const joined = `${carry.text} ${rest[0]}`.replace(/\s+/g, ' ').trim();
+    if (/[.؟!]$/.test(joined)) units.push({ text: joined, page: carry.page });
+    rest = rest.slice(1);
+  } else if (rest.length) {
+    rest = rest.slice(1); // تتمّةٌ بلا صدرٍ معلوم
+  }
+
+  let nextCarry = null;
+  rest.forEach((s, i) => {
+    if (i === rest.length - 1 && !/[.؟!]$/.test(s)) nextCarry = { text: s, page };
+    else units.push({ text: s, page });
+  });
+
+  const items = [];
+  for (const u of units) {
+    const s = u.text;
+    if (s.length < ANTH_MIN || s.length > ANTH_MAX) continue;
+    if (!/[.؟!]$/.test(s) || anthHeading(s) || quranish(s)) continue;
+    if (QUOTED_HADITH.test(s)) continue;
+    const bare = plain(s);
+    if (DIVINE_SPEAKER.test(bare) || bareIsnad(bare)) continue;
+    if (!isSelfContained(s, { allowConnective: true })) continue;
+    items.push({ text: s, page: u.page });
+  }
+  return { items, carry: nextCarry };
 }
