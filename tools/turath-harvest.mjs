@@ -159,8 +159,23 @@ async function main() {
     session.allowance -= 1;
   };
 
+  /**
+   * آليّةُ `sentence` **لا تدخل البذرة آلياً**.
+   *
+   * كتبُ ابن القيم نثرٌ متّصل لا تفصل فيه الطبعة وحداتٍ مكتملة، فالجملةُ
+   * المستخرجة منها لا يضمن بناءُ الطبعة حدَّها — بخلاف `bullet` و`hadeeth`
+   * و`biography`. وهذا منصوصٌ في `BOOKS` وفي جدول الضمانات، لكنّ الشفرة كانت
+   * تخالفه: الجولةُ العادية تحصدها وتكتبها في البذرة، والعملُ المجدول أسبوعياً
+   * يفعل ذلك بلا عينٍ تراه.
+   *
+   * فصارت تُحصد **فقط** مع `--candidates`، أي إلى ملفِّ مراجعةٍ لا إلى البذرة.
+   * والضمانُ في الشفرة لا في تذكُّر الراية.
+   */
   const harvestable = Object.entries(BOOKS).filter(
-    ([name, book]) => book.harvest && (!onlyBook || name === onlyBook),
+    ([name, book]) =>
+      book.harvest &&
+      (!onlyBook || name === onlyBook) &&
+      (book.harvest !== 'sentence' || Boolean(candidatesFile)),
   );
   if (harvestable.length === 0) {
     console.error(onlyBook ? `لا حصد من «${onlyBook}» — راجع BOOKS.` : 'لا كتاب قابلاً للحصد.');
