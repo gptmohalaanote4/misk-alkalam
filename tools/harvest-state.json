@@ -3,7 +3,8 @@
     "199": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 2526
     },
     "212": {
       "cursor": 309,
@@ -13,12 +14,14 @@
     "252": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 594
     },
     "417": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 676
     },
     "1681": {
       "cursor": 1,
@@ -39,7 +42,8 @@
     "12003": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 992
     },
     "12031": {
       "cursor": 1667,
@@ -53,27 +57,32 @@
     "14211": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 109
     },
     "18128": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 502
     },
     "18612": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 1193
     },
     "98093": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 640
     },
     "145411": {
       "cursor": 1,
       "done": false,
-      "channel": "shamela"
+      "channel": "shamela",
+      "last": 1704
     }
   }
 }
