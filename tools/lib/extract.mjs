@@ -900,6 +900,32 @@ const bareIsnad = (bare) =>
 const anthHeading = (s) => /^\s*\[/.test(s) || (s.length < 70 && !/[.؟!]/.test(s));
 
 /**
+ * غلافُ الاقتباس وعلاماتُ الترتيب في المطبوع.
+ *
+ * المؤلف يحوط المنقولَ بـ`((…))` أو `"…"`، ويُصدِّر بعضَه برقمٍ أو نجمة. وهي
+ * من جهاز الكتاب لا من النصّ، فتُجرَّد — ولا يُردُّ النصّ لأجلها: أربعةٌ
+ * وتسعون وحدةً تبدأ بغير حرفٍ عربي، وجُلُّها محتوىً ممتاز («ينبغي للإنسان أن
+ * يعرف شرف زمانه وقدر وقته»).
+ */
+const stripWrappers = (s) => {
+  let t = s.trim();
+  for (let i = 0; i < 4; i++) {
+    const before = t;
+    t = t
+      .replace(/^[*•\s]+/, '')
+      .replace(/^[٠-٩0-9]+\s*[-–—]\s*/, '')
+      .replace(/^[-–—]\s*/, '')
+      .replace(/^\(\(\s*/, '')
+      .replace(/\s*\)\)$/, '')
+      .replace(/^["«»'']+\s*/, '')
+      .replace(/\s*["«»'']+$/, '')
+      .trim();
+    if (t === before) break;
+  }
+  return t;
+};
+
+/**
  * يستخرج فقرات صفحةٍ من كتابٍ جامع.
  *
  * `carry` فقرةٌ لم تُختم في آخر الصفحة السابقة: تُوصل بأوّل هذه وتُنسب إلى
@@ -934,7 +960,9 @@ export function extractAnthology(pageText, { carry = null, page = null } = {}) {
 
   const items = [];
   for (const u of units) {
-    const s = u.text;
+    const s = stripWrappers(u.text);
+    // ما بقي بعد التجريد مبتدئاً بغير حرفٍ عربي فليس نصّاً مستقلاً.
+    if (!/^[ء-ي]/.test(s)) continue;
     if (s.length < ANTH_MIN || s.length > ANTH_MAX) continue;
     if (!/[.؟!]$/.test(s) || anthHeading(s) || quranish(s)) continue;
     if (QUOTED_HADITH.test(s)) continue;
