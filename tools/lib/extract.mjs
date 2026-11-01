@@ -876,6 +876,16 @@ const quranish = (s) => {
 const DIVINE_SPEAKER = /(?:^|\s)(?:قال|وقال|يقول)\s*(?:الله|تعالى|عز وجل|سبحانه)/;
 
 /**
+ * كلامُ المؤلف عن **كتابه هو**: طبعاتُه وزياداتُه ودعاؤه لنفسه. يملأ المقدّمة
+ * وليس موقفاً ولا نقلاً.
+ *
+ * والتضييقُ مقصود: «هذا الكتاب» و«فهرس» تَرِدان في صميم المحتوى — «لم يُصنَّف
+ * في الدنيا أكبرُ من هذا الكتاب»، و«تدلّ فهرسةُ هذا الكتاب على أنه ثلاث مئة
+ * سفر» — فلا تدخلان. والعلامةُ ضميرُ المتكلّم مضافاً إلى الكتاب أو الطبعة.
+ */
+const OWN_BOOK = /(?:^|\s)(?:كتابي|طبعتي|هذه الطبعة|أضفت إلى|أبقيت ترتيب|أن يتقبله)(?:\s|$)/;
+
+/**
  * الحديثُ لا يُنشر مقولةً: مصدرُه الصحيحان بآليّته، وفي فضائل الأعمال.
  * (تسرّب في أول تجربة: «سألت رسول الله… الصلاة على وقتها. رواه البخاري ومسلم».)
  */
@@ -929,7 +939,7 @@ export function extractAnthology(pageText, { carry = null, page = null } = {}) {
     if (!/[.؟!]$/.test(s) || anthHeading(s) || quranish(s)) continue;
     if (QUOTED_HADITH.test(s)) continue;
     const bare = plain(s);
-    if (DIVINE_SPEAKER.test(bare) || bareIsnad(bare)) continue;
+    if (DIVINE_SPEAKER.test(bare) || bareIsnad(bare) || OWN_BOOK.test(bare)) continue;
     if (!isSelfContained(s, { allowConnective: true })) continue;
     items.push({ text: s, page: u.page });
   }

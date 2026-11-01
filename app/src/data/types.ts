@@ -50,7 +50,8 @@ export interface Quote extends Reference {
   kind: 'quote';
   genre: QuoteGenre;
   id: string;
-  scholar_id: string;
+  /** مَن قاله. و`null` لمقولةٍ لا يُعرف قائلُها — فيكفيها اسمُ الكتاب وصفحتُه. */
+  scholar_id: string | null;
   source_id: string;
   text: string;
   source_url: string | null;

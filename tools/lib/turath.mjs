@@ -84,8 +84,8 @@ export const BOOKS = {
   // `biography` تشترط «كان فلانٌ…» فأعطت صفراً، و`sentence` تردّ كلَّ منقولٍ
   // وهذه الكتب كلُّها نقل. و**لا تدخل البذرة آلياً**: النصُّ فيها منقولٌ عن
   // غير مؤلّفه، فنسبتُه قرارٌ لصاحب المشروع (انظر «النسبة في المجاميع»).
-  'قيمة الزمن عند العلماء': { id: 96882, edition: 'ط الشاملة', kind: 'quote', genre: 'anthology', topic: 'الحرص على الوقت', harvest: 'anthology', channel: 'shamela' },
-  'علو الهمة': { id: 96278, edition: 'ط الشاملة', kind: 'quote', genre: 'anthology', topic: 'علو الهمة', harvest: 'anthology', channel: 'shamela' },
+  'قيمة الزمن عند العلماء': { id: 96882, edition: 'ط الشاملة', kind: 'quote', topic: 'الحرص على الوقت', harvest: 'anthology', channel: 'shamela' },
+  'علو الهمة': { id: 96278, edition: 'ط الشاملة', kind: 'quote', topic: 'علو الهمة', harvest: 'anthology', channel: 'shamela' },
 };
 
 /** اسم الكتاب الذي يُعرض تحت الحديث. */

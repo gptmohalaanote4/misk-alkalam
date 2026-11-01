@@ -172,10 +172,11 @@ async function main() {
    * فصارت تُحصد **فقط** مع `--candidates`، أي إلى ملفِّ مراجعةٍ لا إلى البذرة.
    * والضمانُ في الشفرة لا في تذكُّر الراية.
    *
-   * و`anthology` مثلها، لسببٍ آخر: نصُّها منقولٌ عن غير مؤلّف الكتاب — القولُ
-   * للفضيل بن عياض والكتابُ لأبي غدة — فنسبتُه قرارٌ لصاحب المشروع لا للآلة.
+   * و`anthology` تدخل البذرة: نصُّها منقولٌ عن غير مؤلّف الكتاب، وقد حسم صاحب
+   * المشروع نسبتَه — «المقولة التي لا تعرف قائلها حطها بدون قائل، وضع اسم
+   * الكتاب والصفحة». فـ`scholar_slug` فيها فارغ، والمرجعُ كتابُها وصفحتُه.
    */
-  const CANDIDATES_ONLY = new Set(['sentence', 'anthology']);
+  const CANDIDATES_ONLY = new Set(['sentence']);
 
   const harvestable = Object.entries(BOOKS).filter(
     ([name, book]) =>
@@ -214,11 +215,14 @@ async function main() {
     accept(text, `${bookName} ص${page}`, () => {
       addedQuotes.push({
         id: randomUUID(),
-        scholar_slug: book.scholar_slug,
+        // المجموعُ ينقل عن غير مؤلّفه، فلا يُنسب إليه ولا يُفتعل له قائل:
+        // «المقولة التي لا تعرف قائلها حطها بدون قائل، وضع اسم الكتاب والصفحة».
+        scholar_slug: book.scholar_slug ?? null,
         // 'biography' خبرٌ عن صالح من كتب السِّيَر، لا قولٌ لصاحب الكتاب.
         genre: book.genre ?? 'saying',
         text,
         book: bookName,
+        topic: book.topic ?? undefined,
         volume,
         page,
         source_url: url,

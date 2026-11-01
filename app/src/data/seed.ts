@@ -8,7 +8,8 @@ import type { ContentBundle, Dua, Hadith, HadithCollection, Quote, Scholar, Sour
 interface RawQuote {
   id: string;
   genre?: 'saying' | 'biography';
-  scholar_slug: string;
+  /** فارغٌ لمقولةٍ لا يُعرف قائلُها — يكفيها الكتابُ والصفحة. */
+  scholar_slug: string | null;
   source_slug: string;
   text: string;
   book: string;
@@ -58,12 +59,12 @@ const defaultSourceId = sourceBySlug.get(DEFAULT_SOURCE_SLUG) as string;
 export const HADITH_TOPIC = 'فضائل الأعمال';
 
 const quotes: Quote[] = (rawQuotes as RawQuote[])
-  .filter((q) => scholarBySlug.has(q.scholar_slug))
   .map((q) => ({
     kind: 'quote',
     genre: q.genre ?? 'saying',
     id: q.id,
-    scholar_id: scholarBySlug.get(q.scholar_slug) as string,
+    // مقولةٌ بلا قائلٍ معلوم تبقى، ويكفيها الكتابُ والصفحة.
+    scholar_id: q.scholar_slug ? (scholarBySlug.get(q.scholar_slug) ?? null) : null,
     source_id: sourceBySlug.get(q.source_slug) ?? defaultSourceId,
     text: q.text,
     book: q.book,

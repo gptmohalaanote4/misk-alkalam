@@ -1,9 +1,13 @@
 {
   "books": {
     "199": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 2527,
+      "done": true,
+      "channel": "shamela",
+      "last": 2526,
+      "section": [
+        "خاتمة المؤلف"
+      ]
     },
     "212": {
       "cursor": 309,
@@ -11,14 +15,22 @@
       "channel": "turath"
     },
     "252": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 595,
+      "done": true,
+      "channel": "shamela",
+      "last": 594,
+      "section": [
+        "خاتمة"
+      ]
     },
     "417": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 677,
+      "done": true,
+      "channel": "shamela",
+      "last": 676,
+      "section": [
+        "مخالفة الهوى توجب شرف الدنيا وشرف الآخرة"
+      ]
     },
     "1681": {
       "cursor": 1,
@@ -37,9 +49,13 @@
       "channel": "shamela"
     },
     "12003": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 993,
+      "done": true,
+      "channel": "shamela",
+      "last": 992,
+      "section": [
+        "المجلد الرابع"
+      ]
     },
     "12031": {
       "cursor": 1667,
@@ -51,29 +67,58 @@
       "channel": "shamela"
     },
     "14211": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 110,
+      "done": true,
+      "channel": "shamela",
+      "last": 109,
+      "section": [
+        "إشارة المؤلف إلي تأليف له في شرح معنى بيت"
+      ]
     },
     "18128": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 503,
+      "done": true,
+      "channel": "shamela",
+      "last": 502,
+      "section": [
+        "فهرس مراجع ومصادر التحقيق"
+      ]
     },
     "18612": {
-      "cursor": 1,
-      "done": false,
+      "cursor": 1194,
+      "done": true,
+      "channel": "shamela",
+      "last": 1193,
+      "section": [
+        "ابتداعهم الحزانة بدل الصلاة"
+      ]
+    },
+    "96882": {
+      "cursor": 119,
+      "done": true,
+      "last": 118,
+      "section": [
+        "الوقت هو الحياة وهو أغلى من الذهب"
+      ],
       "channel": "shamela"
     },
     "98093": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 641,
+      "done": true,
+      "channel": "shamela",
+      "last": 640,
+      "section": [
+        "فصل: الكلام على حديث \"من عشق فعف"
+      ]
     },
     "145411": {
-      "cursor": 1,
-      "done": false,
-      "channel": "shamela"
+      "cursor": 1705,
+      "done": true,
+      "channel": "shamela",
+      "last": 1704,
+      "section": [
+        "الجمع بين نصوص نفي العدوى وما يفهم منه إثباتها"
+      ]
     }
   }
 }

@@ -80,14 +80,13 @@ function parseBundle(raw: unknown): ContentBundle | null {
         isNonEmptyString(row.book) &&
         // مرجعٌ ناقص لا يُنشر، ومقولةٌ بلا عالم لا تُنسب.
         positive(row.page) != null &&
-        isNonEmptyString(row.scholar_id) &&
-        scholarIds.has(String(row.scholar_id)),
+        (row.scholar_id == null || scholarIds.has(String(row.scholar_id))),
     )
     .map((row) => ({
       kind: 'quote',
       genre: row.genre === 'biography' ? 'biography' : 'saying',
       id: String(row.id),
-      scholar_id: String(row.scholar_id),
+      scholar_id: row.scholar_id == null ? null : String(row.scholar_id),
       source_id:
         isNonEmptyString(row.source_id) && sourceIds.has(String(row.source_id))
           ? String(row.source_id)

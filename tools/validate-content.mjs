@@ -129,7 +129,7 @@ quotes.forEach((q, i) => {
   checkText(where, q.text);
   checkText(where, q.book, 'book');
   checkRef(where, q);
-  if (!scholarSlugs.has(q.scholar_slug)) {
+  if (q.scholar_slug != null && !scholarSlugs.has(q.scholar_slug)) {
     // seed.ts يُسقط المقولة كلها في هذه الحالة، فتختفي بلا أثر.
     err(`${where}: scholar_slug = "${q.scholar_slug}" لا يقابل عالماً، والمقولة ستُحذف عند التحميل.`);
   }

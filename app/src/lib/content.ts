@@ -72,7 +72,7 @@ async function syncFromSupabase(): Promise<ContentBundle | null> {
       kind: 'quote',
       genre: row.genre === 'biography' ? 'biography' : 'saying',
       id: String(row.id),
-      scholar_id: String(row.scholar_id),
+      scholar_id: row.scholar_id == null ? null : String(row.scholar_id),
       source_id: String(row.source_id),
       text: String(row.text),
       book: String(row.book),
@@ -184,7 +184,8 @@ export function availablePools(
   const followed = followedScholarIds.filter((id) => active.has(id));
   const allowed = followed.length > 0 ? new Set(followed) : active;
   return {
-    quote: bundle.quotes.filter((q) => hasPage(q) && allowed.has(q.scholar_id)).map((q) => q.id),
+    quote: // ما لا قائلَ له لا يُستبعد بمتابعة العلماء — فليس لأحدٍ أن يتابعه أو يتركه.
+    bundle.quotes.filter((q) => hasPage(q) && (q.scholar_id == null || allowed.has(q.scholar_id))).map((q) => q.id),
     hadith: bundle.hadiths.filter(hasPage).map((h) => h.id),
     // الأدعية بترتيبها المقصود: `sort_order` هو ما يُعرض به ويُعاد من أوّله.
     dua: bundle.duas

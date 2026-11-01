@@ -61,7 +61,8 @@ lines.push(
 lines.push(
   quotes
     .map((x) => {
-      const sch = scholarId.get(x.scholar_slug);
+      // مقولةٌ بلا قائلٍ معلوم: scholar_id يبقى NULL، ويكفيها الكتابُ والصفحة.
+      const sch = x.scholar_slug ? scholarId.get(x.scholar_slug) : null;
       const src = sourceId.get(x.source_slug) ?? defaultSource.id;
       const needsCheck = x.page == null;
       const genre = x.genre === 'biography' ? 'biography' : 'saying';

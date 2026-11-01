@@ -27,14 +27,13 @@ const scholarBySlug = new Map(scholars.map((s) => [s.slug, s.id]));
 const sourceBySlug = new Map(sources.map((s) => [s.slug, s.id]));
 const defaultSource = sources.find((s) => s.is_default) ?? sources[0];
 
-// نفس حُرّاس `seed.ts`: ما لا يقابل عالماً يُسقط، والأحاديث من الصحيحين حصراً.
+// نفس حُرّاس `seed.ts`. والمقولةُ بلا قائلٍ معلوم تبقى — يكفيها الكتابُ والصفحة.
 const quotes = rawQuotes
-  .filter((q) => scholarBySlug.has(q.scholar_slug))
   .map((q) => ({
     kind: 'quote',
     genre: q.genre === 'biography' ? 'biography' : 'saying',
     id: q.id,
-    scholar_id: scholarBySlug.get(q.scholar_slug),
+    scholar_id: q.scholar_slug ? (scholarBySlug.get(q.scholar_slug) ?? null) : null,
     source_id: sourceBySlug.get(q.source_slug) ?? defaultSource.id,
     text: q.text,
     book: q.book,

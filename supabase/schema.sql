@@ -94,7 +94,8 @@ create table if not exists public.scholars (
 
 create table if not exists public.quotes (
   id                     uuid primary key default gen_random_uuid(),
-  scholar_id             uuid not null references public.scholars (id) on delete cascade,
+  -- فارغٌ لمقولةٍ لا يُعرف قائلُها: يكفيها اسمُ الكتاب وصفحتُه (قرار صاحب المشروع).
+  scholar_id             uuid references public.scholars (id) on delete cascade,
   source_id              uuid not null references public.sources (id),
   -- النوع الفرعي: قولٌ للعالم، أو خبرٌ عن صالح من كتب السِّيَر. كلاهما في قسم
   -- المقولات، ويختلفان في العرض وحده («من سير الصالحين»).

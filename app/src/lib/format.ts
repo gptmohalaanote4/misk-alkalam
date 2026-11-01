@@ -29,6 +29,8 @@ export function attributionName(item: ContentItem, scholars: Map<string, Scholar
   if (item.kind === 'dua') return 'من دعاء النبي ﷺ';
   // الخبر عن صالحٍ ليس قولاً له ولا لمؤلّف الكتاب.
   if (item.genre === 'biography') return 'من سير الصالحين';
+  // لا قائلَ معلوماً: لا يُفتعل له اسم، والمرجعُ تحته يحمل الكتاب والصفحة.
+  if (!item.scholar_id) return '';
   return scholars.get(item.scholar_id)?.name ?? 'عالم';
 }
 
